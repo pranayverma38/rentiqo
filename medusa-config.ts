@@ -23,7 +23,7 @@ module.exports = defineConfig({
     backendUrl:
       process.env.MEDUSA_BACKEND_URL?.trim() ||
       process.env.BACKEND_URL?.trim() ||
-      'http://api.rentiqo.in',
+      'https://api.rentiqo.in',
   },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
