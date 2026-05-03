@@ -2,6 +2,15 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
+/** Public Medusa server URL (no trailing slash). Admin API + local file URLs derive from this. */
+const BACKEND_URL =
+  process.env.MEDUSA_BACKEND_URL?.trim() ||
+  process.env.BACKEND_URL?.trim() ||
+  'https://api.rentiqo.in'
+
+/** Local file module builds absolute upload URLs; must match where `/static` is publicly served. */
+const FILE_LOCAL_BACKEND_URL = `${BACKEND_URL.replace(/\/+$/, '')}/static`
+
 /** Any browser origin with http or https (Medusa regex CORS format). */
 const ALLOW_ALL_HTTP_HTTPS_ORIGINS = '#^https?://.+#'
 
@@ -20,11 +29,24 @@ const SESSION_COOKIE_OPTIONS = {
 
 module.exports = defineConfig({
   admin: {
-    backendUrl:
-      process.env.MEDUSA_BACKEND_URL?.trim() ||
-      process.env.BACKEND_URL?.trim() ||
-      'https://api.rentiqo.in',
+    backendUrl: BACKEND_URL,
   },
+  modules: [
+    {
+      resolve: '@medusajs/medusa/file',
+      options: {
+        providers: [
+          {
+            resolve: '@medusajs/medusa/file-local',
+            id: 'local',
+            options: {
+              backend_url: FILE_LOCAL_BACKEND_URL,
+            },
+          },
+        ],
+      },
+    },
+  ],
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     cookieOptions: SESSION_COOKIE_OPTIONS,
