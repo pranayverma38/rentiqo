@@ -19,6 +19,12 @@ const SESSION_COOKIE_OPTIONS = {
 } as Record<string, unknown>
 
 module.exports = defineConfig({
+  admin: {
+    backendUrl:
+      process.env.MEDUSA_BACKEND_URL?.trim() ||
+      process.env.BACKEND_URL?.trim() ||
+      'http://api.rentiqo.in',
+  },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     cookieOptions: SESSION_COOKIE_OPTIONS,
